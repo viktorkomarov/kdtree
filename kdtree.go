@@ -66,3 +66,34 @@ func buildChildren(k, d int, leftValues, rightValues [][]int) (*Node, *Node) {
 
 	return left, right
 }
+
+func totalEqualCoord(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+
+	return true
+}
+
+func ExactMatch(root Root, k []int) *Node {
+	walk := func(root Root, d int, k []int) *Node {
+		if totalEqualCoord(k, root.coord) {
+			n := Node(root)
+			return &n
+		}
+
+		idx := disc(d, len(k))
+
+		if root.coord[idx] < k[idx] {
+
+		}
+	}
+
+	return walk(root, 0, k)
+}
