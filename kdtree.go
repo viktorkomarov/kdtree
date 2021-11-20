@@ -144,3 +144,22 @@ func MultipleMatch(root Root, keys map[int]int) [][]int {
 	var result [][]int
 	return multipleWalk(&node, 0, keys, result)
 }
+
+type UpDown struct {
+	up   int
+	down int
+}
+
+func inRec(coord []int, rec []UpDown) bool {
+	for i, c := range coord {
+		if c >= rec[i].down && c <= rec[i].up {
+			return false
+		}
+	}
+
+	return true
+}
+
+func RecMatch(root Root, rec []UpDown) [][]int {
+
+}
