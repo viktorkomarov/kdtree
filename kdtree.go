@@ -81,19 +81,66 @@ func totalEqualCoord(a, b []int) bool {
 	return true
 }
 
+func exactWalk(node *Node, d int, k []int) *Node {
+	if node == nil {
+		return nil
+	}
+
+	if totalEqualCoord(node.coord, k) {
+		return node
+	}
+
+	idx := disc(d, len(k))
+	if node.coord[idx] < k[idx] {
+		return exactWalk(node.left, d+1, k)
+	}
+
+	return exactWalk(node.right, d+1, k)
+}
+
 func ExactMatch(root Root, k []int) *Node {
-	walk := func(root Root, d int, k []int) *Node {
-		if totalEqualCoord(k, root.coord) {
-			n := Node(root)
-			return &n
-		}
+	n := Node(root)
+	return exactWalk(&n, 0, k)
+}
 
-		idx := disc(d, len(k))
-
-		if root.coord[idx] < k[idx] {
-
+func eqCoordMap(coord []int, keys map[int]int) bool {
+	totalMatch := 0
+	for i, val := range coord {
+		if v, ok := keys[i]; ok && v == val {
+			totalMatch++
 		}
 	}
 
-	return walk(root, 0, k)
+	return totalMatch == len(keys)
+}
+
+// TODO :: check for slice bug
+func multipleWalk(node *Node, d int, keys map[int]int, set [][]int) [][]int {
+	if node == nil {
+		return nil
+	}
+
+	if eqCoordMap(node.coord, keys) {
+		set = append(set, node.coord)
+	}
+
+	idx := disc(d, len(node.coord))
+	c, ok := keys[idx]
+	switch {
+	case !ok || c == node.coord[idx]:
+		set = multipleWalk(node.left, d+1, keys, set)
+		set = multipleWalk(node.right, d+1, keys, set)
+	case c < node.coord[idx]:
+		set = multipleWalk(node.left, d+1, keys, set)
+	case c > node.coord[idx]:
+		set = multipleWalk(node.right, d+1, keys, set)
+	}
+
+	return set
+}
+
+func MultipleMatch(root Root, keys map[int]int) [][]int {
+	node := Node(root)
+	var result [][]int
+	return multipleWalk(&node, 0, keys, result)
 }
